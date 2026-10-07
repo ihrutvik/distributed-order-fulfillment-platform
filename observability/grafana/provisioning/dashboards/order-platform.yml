@@ -1,0 +1,10 @@
+apiVersion: 1
+providers:
+  - name: Order Platform
+    orgId: 1
+    folder: Backend Portfolio
+    type: file
+    disableDeletion: true
+    updateIntervalSeconds: 30
+    options:
+      path: /var/lib/grafana/dashboards

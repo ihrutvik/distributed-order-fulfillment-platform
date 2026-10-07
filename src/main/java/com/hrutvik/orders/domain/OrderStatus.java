@@ -1,0 +1,6 @@
+package com.hrutvik.orders.domain;
+
+public enum OrderStatus {
+  PENDING, INVENTORY_RESERVED, PAYMENT_AUTHORIZED, SHIPMENT_RESERVED, CONFIRMED,
+  COMPENSATING, CANCELLED
+}

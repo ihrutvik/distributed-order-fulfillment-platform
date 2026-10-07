@@ -1,0 +1,77 @@
+spring:
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/orders}
+    username: ${DATABASE_USER:orders}
+    password: ${DATABASE_PASSWORD:orders}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      properties:
+        enable.idempotence: true
+        acks: all
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      enable-auto-commit: false
+      properties:
+        isolation.level: read_committed
+    template:
+      observation-enabled: true
+    listener:
+      observation-enabled: true
+orders:
+  events:
+    topic: order-lifecycle-events
+  outbox:
+    batch-size: 100
+    poll-delay: 1s
+  saga:
+    replies-topic: order-saga-replies
+    inventory-commands-topic: inventory-commands
+    payment-commands-topic: payment-commands
+    shipment-commands-topic: shipment-commands
+    consumer-group: order-saga-coordinator
+    timeout-max-attempts: 3
+    timeout-base-backoff: 10s
+    timeout-batch-size: 50
+    timeout-poll-delay: 5s
+  payment:
+    authorization-limit: ${PAYMENT_AUTHORIZATION_LIMIT:10000.00}
+  shipment:
+    default-zone: ${SHIPMENT_DEFAULT_ZONE:DEFAULT}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  metrics:
+    tags:
+      application: distributed-order-fulfillment-platform
+  tracing:
+    sampling:
+      probability: ${TRACING_SAMPLE_PROBABILITY:1.0}
+  otlp:
+    tracing:
+      endpoint: ${OTLP_TRACING_ENDPOINT:http://localhost:4318/v1/traces}
+logging:
+  pattern:
+    correlation: '[traceId=%X{traceId:-} spanId=%X{spanId:-} correlationId=%X{correlationId:-}] '
+springdoc:
+  swagger-ui:
+    path: /docs
+server:
+  shutdown: graceful
+spring.lifecycle:
+  timeout-per-shutdown-phase: 30s
+management.endpoint.health.probes.enabled: true
+management.health:
+  livenessstate.enabled: true
+  readinessstate.enabled: true

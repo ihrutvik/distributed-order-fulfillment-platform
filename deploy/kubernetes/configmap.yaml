@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: order-platform-config
+data:
+  KAFKA_BOOTSTRAP_SERVERS: orders-kafka-bootstrap.kafka.svc:9092
+  OTLP_TRACING_ENDPOINT: http://otel-collector.observability.svc:4318/v1/traces
+  TRACING_SAMPLE_PROBABILITY: "0.10"
+  PAYMENT_AUTHORIZATION_LIMIT: "10000.00"
+  SHIPMENT_DEFAULT_ZONE: DEFAULT

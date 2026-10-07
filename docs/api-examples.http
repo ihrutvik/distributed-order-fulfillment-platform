@@ -1,0 +1,46 @@
+@baseUrl = http://localhost:8080
+@apiKey = demo-secret
+
+### Create an order
+POST {{baseUrl}}/v1/orders
+Content-Type: application/json
+X-Api-Key: {{apiKey}}
+X-Correlation-Id: portfolio-demo-001
+
+{
+  "clientOrderId": "portfolio-order-001",
+  "amount": 79.99,
+  "currency": "EUR",
+  "sku": "DEMO-SKU",
+  "quantity": 1
+}
+
+### Exact replay: returns the same order
+POST {{baseUrl}}/v1/orders
+Content-Type: application/json
+X-Api-Key: {{apiKey}}
+
+{
+  "clientOrderId": "portfolio-order-001",
+  "amount": 79.99,
+  "currency": "EUR",
+  "sku": "DEMO-SKU",
+  "quantity": 1
+}
+
+### Conflicting replay: returns 409 IDEMPOTENCY_CONFLICT
+POST {{baseUrl}}/v1/orders
+Content-Type: application/json
+X-Api-Key: {{apiKey}}
+
+{
+  "clientOrderId": "portfolio-order-001",
+  "amount": 89.99,
+  "currency": "EUR",
+  "sku": "DEMO-SKU",
+  "quantity": 1
+}
+
+### Fetch an order (replace the ID)
+GET {{baseUrl}}/v1/orders/00000000-0000-0000-0000-000000000000
+X-Api-Key: {{apiKey}}
