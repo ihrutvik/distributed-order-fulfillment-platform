@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:25-jre-alpine
 RUN addgroup -S app && adduser -S app -G app
 COPY target/distributed-order-fulfillment-platform-1.0.0.jar /app.jar
 RUN chown app:app /app.jar
